@@ -22,25 +22,66 @@ class _HomeScreenState extends State<HomeScreen> {
     const Center(child: Text("Profile Page")),
   ];
 
+  // ✅ Put the fixed method HERE (inside the class)
   void _onItemTapped(int index) {
+    if (index == 1 || index == 2) {
+      ScaffoldMessenger.of(context).clearSnackBars();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          behavior: SnackBarBehavior.floating,
+          margin: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          duration: const Duration(seconds: 2),
+          content: Container(
+            padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 20),
+            decoration: BoxDecoration(
+              color: const Color(0xFF345C4C),
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.15),
+                  blurRadius: 8,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: const Center(
+              child: Text(
+                "🎨 Coming Soon Feature!",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                  letterSpacing: 0.5,
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+      return;
+    }
+
     setState(() {
       _selectedIndex = index;
     });
   }
 
+  // ✅ then your build() method continues below
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFFC6C6),
-      // appBar: AppBar(
-      //   backgroundColor: const Color(0xFF345C4C),
-      //   title: const Text("Art Quiz", style: TextStyle(color: Colors.white)),
+      backgroundColor: const Color(0xFFFFEAEA),
       body: _pages[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: const Color(0xFF345C4C),
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
-        selectedItemColor: const Color(0xFF345C4C),
-        unselectedItemColor: Colors.grey,
+        selectedItemColor: const Color(0xFFFFEAEA),
+        unselectedItemColor: Colors.white,
+        type: BottomNavigationBarType.fixed,
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
           BottomNavigationBarItem(icon: Icon(Icons.quiz), label: 'Quiz'),
@@ -51,6 +92,36 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
+// void _onItemTapped(int index) {
+  //   setState(() {
+  //     _selectedIndex = index;
+  //   });
+  // }
+
+  // @override
+  // Widget build(BuildContext context) {
+  //   return Scaffold(
+  //     backgroundColor: const Color(0xFFFFC6C6),
+  //     // appBar: AppBar(
+  //     //   backgroundColor: const Color(0xFF345C4C),
+  //     //   title: const Text("Art Quiz", style: TextStyle(color: Colors.white)),
+  //     body: _pages[_selectedIndex],
+  //     bottomNavigationBar: BottomNavigationBar(
+  //       backgroundColor: const Color(0xFF345C4C), // ✅ Green background
+  //       currentIndex: _selectedIndex,
+  //       onTap: _onItemTapped,
+  //       selectedItemColor: const Color(0xFFFFC6C6), // ✅ Pink when active
+  //       unselectedItemColor: Colors.white, // ✅ White when inactive
+  //       type: BottomNavigationBarType.fixed,
+  //       items: const [
+  //         BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+  //         BottomNavigationBarItem(icon: Icon(Icons.quiz), label: 'Quiz'),
+  //         BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
+  //       ],
+  //     ),
+  //   );
+  // }
+
 class HomeContent extends StatelessWidget {
   const HomeContent({super.key});
 
@@ -60,10 +131,10 @@ class HomeContent extends StatelessWidget {
 
     return Stack(
       children: [
-        // 🟩 Pink background
-        Container(color: const Color(0xFFFFC6C6)),
 
-        // 🟢 Green top background with your Figma image
+        Container(color: const Color(0xFFFFEAEA)),
+
+
         Align(
           alignment: Alignment.topCenter,
           child: SizedBox(
@@ -84,7 +155,7 @@ class HomeContent extends StatelessWidget {
                 children: [
                   const SizedBox(height: 40),
 
-                  // 🎯 Score circle
+
                   Container(
                     width: 160,
                     height: 160,
@@ -92,7 +163,7 @@ class HomeContent extends StatelessWidget {
                       color: const Color(0xFFFFF0F0),
                       shape: BoxShape.circle,
                       border: Border.all(
-                        color: const Color(0xFFFFC6C6),
+                        color: const Color(0xFFFFBBBC),
                         width: 8,
                       ),
                       boxShadow: [
@@ -164,7 +235,7 @@ class HomeContent extends StatelessWidget {
                   ),
                   const SizedBox(height: 40),
 
-                  // 🟩 Start Quiz button
+                  // Start Quiz button
                   ElevatedButton(
                     onPressed: () {
                       Navigator.push(
@@ -187,6 +258,39 @@ class HomeContent extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
+                  ),
+                  const SizedBox(height: 15),
+
+                  Consumer<QuizProvider>(
+                    builder: (context, quiz, _) {
+                      if (!quiz.hasCompletedQuiz) return const SizedBox.shrink();
+                      return Padding(
+                        padding: const EdgeInsets.only(top: 10),
+                        child: OutlinedButton(
+                          style: OutlinedButton.styleFrom(
+                            side: const BorderSide(color: Color(0xFF345C4C), width: 2),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            padding: const EdgeInsets.symmetric(horizontal: 80, vertical: 16),
+                          ),
+                          onPressed: () {
+                            quiz.resetQuiz();
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('Quiz has been reset!')),
+                            );
+                          },
+                          child: const Text(
+                            "Reset Quiz",
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF345C4C),
+                            ),
+                          ),
+                        ),
+                      );
+                    },
                   ),
                 ],
               ),
