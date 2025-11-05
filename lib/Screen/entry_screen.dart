@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'home_screen.dart';
+import 'package:provider/provider.dart';
+import '../providers/quiz_provider.dart';
 
 class EntryScreen extends StatefulWidget {
   const EntryScreen({super.key});
@@ -18,7 +20,7 @@ class _EntryScreenState extends State<EntryScreen> {
       body: Stack(
         children: [
           // Pink background (bottom half)
-          Container(color: const Color(0xFFFFC6C6)),
+          Container(color: const Color(0xFFFFEAEA)),
 
           // Green top half with rounded bottom
           Align(
@@ -153,19 +155,22 @@ class _EntryScreenState extends State<EntryScreen> {
                               ),
                               onPressed: () {
                                 final name = nameController.text.trim();
-                                final studentClass =
-                                classController.text.trim();
+                                final studentClass = classController.text.trim();
 
                                 if (name.isEmpty || studentClass.isEmpty) {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
-                                      content: Text(
-                                          'Please fill in both name and class.'),
+                                      content: Text('Please fill in both name and class.'),
                                     ),
                                   );
                                   return;
                                 }
 
+                                // ✅ Save the info to QuizProvider
+                                final quiz = context.read<QuizProvider>();
+                                quiz.setPlayerInfo(name, studentClass);
+
+                                // Then navigate
                                 Navigator.pushReplacement(
                                   context,
                                   MaterialPageRoute(
