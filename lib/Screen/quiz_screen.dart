@@ -14,9 +14,9 @@ class QuestionScreen extends StatelessWidget {
     final selectedIndex = quiz.selectedAnswers[quiz.currentIndex];
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFFC6C6),
+      backgroundColor: const Color(0xFFFFEAEA),
       appBar: AppBar(
-        backgroundColor: const Color(0xFF345C4C),
+        backgroundColor: const Color(0xFFFFEAEA),
         title: const Text('ART'),
         centerTitle: true,
       ),
